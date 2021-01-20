@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+elasticsearch = {extras = ["async"], version = "*"}
+dagster = "*"
+dagit = "*"
+pydantic = "*"
+tweepy = "*"
+dagster-cron = "*"
+redis = "*"
+miniflux = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
