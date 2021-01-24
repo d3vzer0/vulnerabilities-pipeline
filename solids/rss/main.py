@@ -1,6 +1,5 @@
 from .utils.transforms import Transform
-from dagster import pipeline, solid, Field, Int, Dict, String, List
-from elastic.elastic_pipeline import elastic_upsert
+from dagster import solid, Field, Int, Dict, String, List
 import miniflux
 
 @solid(
@@ -14,17 +13,35 @@ import miniflux
             String,
             is_required=True,
             description='API consumer secret'
-        ),
-        'feed': Field(
-            Int,
-            is_required=True,
         )
     }
 )
-def get_latest_entries(context) -> List[Dict]:
+def get_latest_entries(context, feed: Int) -> List[Dict]:
     ''' Get the latest RSS entries'''
     client = miniflux.Client(context.solid_config['uri'], api_key=context.solid_config['api_key'])
-    entries = client.get_feed_entries(context.solid_config['feed'], status='unread').get('entries', [])
+    entries = client.get_feed_entries(feed, status='unread').get('entries', [])
+    context.log.info(f'Received {len(entries)} entries')
+    return entries
+
+
+@solid(
+    config_schema={
+        'api_key': Field(
+            String,
+            is_required=True,
+            description='API consumer key'
+        ),
+        'uri': Field(
+            String,
+            is_required=True,
+            description='API consumer secret'
+        )
+    }
+)
+def get_all_entries(context, feed: Int) -> List[Dict]:
+    ''' Get the latest RSS entries'''
+    client = miniflux.Client(context.solid_config['uri'], api_key=context.solid_config['api_key'])
+    entries = client.get_feed_entries(feed).get('entries', [])
     context.log.info(f'Received {len(entries)} entries')
     return entries
 
@@ -48,6 +65,12 @@ def format_entries(context, entries:List[Dict]) -> List[Dict]:
             String,
             is_required=True,
             description='URI'
+        ),
+        'state': Field(
+            String,
+            is_required=False,
+            default_value='read',
+            description='state'  
         )
     }
 )
@@ -55,13 +78,4 @@ def update_entries(context, entries:List[Dict]):
     ''' Mark entries as read '''
     client = miniflux.Client(context.solid_config['uri'], api_key=context.solid_config['api_key'])
     entries_id = [entry['rss.id'] for entry in entries]
-    client.update_entries(entries_id, 'read')
-
-
-@pipeline
-def sync_new_rss():
-    entries = get_latest_entries()
-    formatted = format_entries(entries)
-    elastic_upsert(formatted)
-    update_entries(formatted)
-
+    client.update_entries(entries_id, context.solid_config['state'])

@@ -12,6 +12,11 @@ tweepy = "*"
 dagster-cron = "*"
 redis = "*"
 miniflux = "*"
+sklearn = "*"
+spacy = "*"
+spacy-lookups-data = "*"
+lxml = "*"
+pandas = "*"
 
 [dev-packages]
 

@@ -1,0 +1,4 @@
+{"label": "CVE", "pattern": [{"SHAPE": "XXX-dddd-dddd"}]}
+{"label": "CVE", "pattern": [{"SHAPE": "xxx-dddd-dddd"}]}
+{"label": "ADVISORY", "pattern": [{"SHAPE": "XXXdddddd"}]}
+{"label": "ADVISORY", "pattern": [{"SHAPE": "xxxdddddd"}]}

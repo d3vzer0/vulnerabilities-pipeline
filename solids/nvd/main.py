@@ -1,7 +1,6 @@
 
-from dagster import pipeline, solid, Field, Int, Dict, String, List
+from dagster import solid, Field, Int, Dict, List
 from datetime import datetime, timedelta
-from elastic.elastic_pipeline import elastic_upsert
 from .utils.api import NVD
 from .utils.transforms import CVE
 
@@ -10,7 +9,7 @@ from .utils.transforms import CVE
         'fetch_days': Field(
             Int,
             is_required=False,
-            default_value=7,
+            default_value=3,
             description='Default amount of days to sync on first run'
         ),
         'max_results': Field(
@@ -56,10 +55,3 @@ def parse_cve_refs(context, cves: List[Dict]) -> List[Dict]:
     references = [cpe for cve in cves for cpe in CVE(cve=cve).references] 
     context.log.info(f'Sample reference - {references[0]}')
     return references
-
-@pipeline
-def sync_new_cves():
-    new_cves = get_latest_cves()
-    elastic_upsert(parse_cve_details(new_cves))
-    elastic_upsert(parse_cve_refs(new_cves))
-    elastic_upsert(parse_cve_impacted(new_cves))
