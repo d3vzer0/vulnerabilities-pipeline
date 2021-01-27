@@ -1,21 +1,11 @@
-from .utils.api import Tweets
 from .utils.transforms import Transform
 from .utils.matching import Match
 from dagster import solid, Field, Int, Dict, String, Optional, List
 import redis
 
 @solid(
+    required_resource_keys={'twitter'},
     config_schema={
-        'consumer_key': Field(
-            String,
-            is_required=True,
-            description='API consumer key'
-        ),
-        'consumer_secret': Field(
-            String,
-            is_required=True,
-            description='API consumer secret'
-        ),
         'init_limit': Field(
             Int,
             is_required=False,
@@ -32,9 +22,8 @@ import redis
 )
 def get_latest_tweets(context, offset: Optional[String]) -> List[Dict]:
     ''' Get the latest tweets from the Twitter API '''
-    tweet_object = Tweets(consumer_key=context.solid_config['consumer_key'],
-        consumer_secret=context.solid_config['consumer_secret'])
-    get_tweets = tweet_object.query(context.solid_config['query'], since=offset)
+    client = context.resources.rss.client
+    get_tweets = client.query(context.solid_config['query'], since=offset)
     context.log.info(f'Parsing tweets for {len(get_tweets)} entries')
     parsed_tweets = [Transform(tweet).to_dict for tweet in get_tweets]
     context.log.info(f'Sample - {parsed_tweets[0]}')

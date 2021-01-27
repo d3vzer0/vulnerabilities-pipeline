@@ -19,6 +19,7 @@ class Transform:
     def to_dict(self):
         ''' Denormalizes RSS Entry with ECS schema '''
         return{
+            'event.provider': 'rss',
             'rss.title': self.entry['title'],
             'rss.id': self.entry['id'],
             'rss.source': self.entry['feed']['title'],
