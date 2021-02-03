@@ -1,4 +1,5 @@
-from dagster import pipeline, composite_solid, ModeDefinition
+from dagster import pipeline, composite_solid, PresetDefinition, ModeDefinition
+from dagster.utils import file_relative_path
 from solids.rss.main import (get_latest_entries,
     format_entries, update_entries, get_all_entries)
 from solids.summarize.main import summarize_feeds
@@ -30,6 +31,15 @@ def composite_rss():
         ModeDefinition(
             'prod', resource_defs={'rss': miniflux_rss, 'es': es_resource}
         )
+    ],
+    preset_defs=[
+        PresetDefinition.from_files(
+            'prod',
+            config_files=[
+                file_relative_path(__file__, 'presets/prod_rss.yaml')
+            ],
+            mode='prod',
+        ),
     ]
 )
 def sync_new_rss():

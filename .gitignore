@@ -2,9 +2,11 @@
 .vscode/
 
 # Ignore local config files
-dagster.yaml
+# dagster.yaml
 pipeline.yaml
 workspaces.yaml
+
+pipelines/presets/*
 
 # Ignore data dir
 *-data/

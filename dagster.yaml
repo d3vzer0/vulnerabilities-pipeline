@@ -4,6 +4,10 @@ run_storage:
   config:
     base_dir: /home/stonks/dagster/var/db
 
+run_coordinator:
+  module: dagster.core.run_coordinator
+  class: QueuedRunCoordinator
+
 event_log_storage:
   module: dagster.core.storage.event_log
   class: SqliteEventLogStorage
@@ -29,6 +33,6 @@ run_launcher:
 telemetry:
   enabled: false
 
-scheduler:
-  module: dagster_cron.cron_scheduler
-  class: SystemCronScheduler
+# scheduler:
+#   module: dagster_cron.cron_scheduler
+#   class: DagsterDaemonScheduler

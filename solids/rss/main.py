@@ -1,14 +1,18 @@
 from .utils.transforms import Transform
-from dagster import solid, Field, Int, Dict, String, List
+from dagster import solid, Field, Int, Dict, String, List, OutputDefinition, Output
 
 
-@solid(required_resource_keys={'rss'})
+@solid(
+    required_resource_keys={'rss'},
+    output_defs=[OutputDefinition(List[Dict], 'entries', is_required=False)]
+)
 def get_latest_entries(context, feed: Int) -> List[Dict]:
     ''' Get the latest RSS entries'''
     client = context.resources.rss.client
     entries = client.get_feed_entries(feed, status='unread').get('entries', [])
     context.log.info(f'Received {len(entries)} entries')
-    return entries
+    if entries: yield Output(entries, output_name="entries")
+    # return entries
 
 
 @solid(required_resource_keys={'rss'})
@@ -25,7 +29,7 @@ def format_entries(context, entries:List[Dict]) -> List[Dict]:
     ''' Format to ECS Schema '''
     context.log.info(f'Parsing {len(entries)} total')
     entries_modified = [Transform(entry).to_dict for entry in entries]
-    context.log.info(f'Sample - {entries_modified[0]}')
+    context.log.info(f'Entries modified - {len(entries_modified)}')
     return entries_modified
 
 @solid(

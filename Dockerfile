@@ -1,5 +1,5 @@
 FROM python:3.8-slim
-
+RUN apt-get update && apt-get -y install cron
 RUN pip3 install virtualenv pipenv
 
 RUN useradd -ms /bin/bash stonks
@@ -18,14 +18,14 @@ RUN python -m spacy download nl_core_news_sm
 
 # Create directory structure and copy dagster pipelines
 RUN mkdir -p dagster/home dagster/app dagster/var/storage dagster/var/db
-COPY main.py pipelines solids /home/stonks/dagster/app/
+COPY . /home/stonks/dagster/app/
 
 # Copy dagster instance YAML to dagster home dir
 COPY dagster.yaml /home/stonks/dagster/home/
 WORKDIR /home/stonks/dagster/app/
 ENV DAGSTER_HOME=/home/stonks/dagster/home/
 
-
 EXPOSE 3000
 
-ENTRYPOINT ["dagit", "-h", "0.0.0.0", "-p", "3000"]
+# ENTRYPOINT ["wrapper.sh"]
+CMD ./wrapper.sh

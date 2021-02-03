@@ -1,10 +1,11 @@
+from dagster import solid, Field, Int, Dict, String, OutputDefinition, List, Output
 from .utils.transforms import Transform
 from .utils.matching import Match
-from dagster import solid, Field, Int, Dict, String, Optional, List
 import redis
 
 @solid(
     required_resource_keys={'twitter'},
+    output_defs=[OutputDefinition(List[Dict], 'tweets', is_required=False)],
     config_schema={
         'init_limit': Field(
             Int,
@@ -20,14 +21,13 @@ import redis
         )
     }
 )
-def get_latest_tweets(context, offset: Optional[String]) -> List[Dict]:
+def get_latest_tweets(context) -> List[Dict]:
     ''' Get the latest tweets from the Twitter API '''
     client = context.resources.twitter.client
-    get_tweets = client.query(context.solid_config['query'], since=offset)
+    get_tweets = client.query(context.solid_config['query'], since=None)
     context.log.info(f'Parsing tweets for {len(get_tweets)} entries')
     parsed_tweets = [Transform(tweet).to_dict for tweet in get_tweets]
-    context.log.info(f'Sample - {parsed_tweets[0]}')
-    return parsed_tweets
+    if parsed_tweets: yield Output(parsed_tweets, output_name='tweets')
 
 
 @solid(

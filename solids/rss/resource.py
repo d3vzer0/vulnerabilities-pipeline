@@ -4,7 +4,7 @@ import miniflux
 @resource(
     config_schema={
         'api_key': StringSource,
-        'base_uri': String,
+        'base_uri': StringSource,
     }
 )
 def miniflux_rss(init_context):

@@ -1,4 +1,5 @@
-from dagster import pipeline, ModeDefinition
+from dagster import pipeline, ModeDefinition, PresetDefinition
+from dagster.utils import file_relative_path
 from solids.nvd.main import (get_latest_cves,
     parse_cve_details, parse_cve_refs, parse_cve_impacted)
 from solids.elastic.main import elastic_upsert
@@ -9,6 +10,15 @@ from solids.elastic.resource import es_resource
         ModeDefinition(
             'prod', resource_defs={'es': es_resource}
         )
+    ],
+    preset_defs=[
+        PresetDefinition.from_files(
+            'prod',
+            config_files=[
+                file_relative_path(__file__, 'presets/prod_nvd.yaml')
+            ],
+            mode='prod',
+        ),
     ]
 )
 def sync_new_cves():
