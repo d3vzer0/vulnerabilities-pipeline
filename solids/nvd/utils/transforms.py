@@ -38,7 +38,7 @@ class CVE:
             'reference.name': reference['name'],
             'reference.source': reference['refsource'],
             'reference.tags': reference.get('tags', []),
-            'tags': [self.cve['cve']['CVE_data_meta']['ID']],
+            'tags': [self.cve['cve']['CVE_data_meta']['ID'].lower()],
             'fingerprint': CVE.fingerprint(self.cve['publishedDate'],
                 f'{self.cve["cve"]["CVE_data_meta"]["ID"]}{reference["name"]}')
         } for reference in self.cve['cve']['references']['reference_data']]
@@ -101,7 +101,7 @@ class CVE:
             'vulnerability.description': '\n'.join([desc['value'] for desc in self.cve['cve']['description']['description_data']]),
             'publish_date': self.cve['publishedDate'],
             'modified_date': self.cve['lastModifiedDate'],
-            'tags': [self.cve['cve']['CVE_data_meta']['ID']],
+            'tags': [self.cve['cve']['CVE_data_meta']['ID'].lower()],
             'fingerprint': CVE.fingerprint(self.cve['publishedDate'],
                 self.cve['cve']['CVE_data_meta']['ID']),
             **self.impact
@@ -120,9 +120,9 @@ class CVE:
                         'nvd.dataset': 'CVE',
                         'nvd.module': 'impacted',
                         'tags': [
-                            self.cve['cve']['CVE_data_meta']['ID'], 
-                            parsed_cpe.get('impacted.vendor'),
-                            parsed_cpe.get('impacted.product')
+                            self.cve['cve']['CVE_data_meta']['ID'].lower(), 
+                            parsed_cpe.get('impacted.vendor').lower(),
+                            parsed_cpe.get('impacted.product').lower()
                         ],
                         'vulnerability.id': self.cve['cve']['CVE_data_meta']['ID'],
                         'vulnerability.type': 'CVE',

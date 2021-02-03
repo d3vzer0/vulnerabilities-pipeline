@@ -18,7 +18,7 @@ class TFIDF:
         vectors = vectorizer.fit_transform([doc['content'] for doc in docs])
         df = pd.DataFrame(vectors.toarray(), index=[doc['title'] for doc in docs],
             columns=vectorizer.get_feature_names())
-        terms = {index: [column for column, value in row.iteritems() if value > self.threshold] \
+        terms = {index: [column.lower() for column, value in row.iteritems() if value > self.threshold and len(column) > 1] \
             for index, row in df.iterrows()}
         return terms
  

@@ -25,7 +25,7 @@ class Transform:
             'tweet.content': self.tweet.full_text,
             'publish_date': self.tweet.created_at,
             'tweet.favourite_count': self.tweet.favorite_count,
-            'tweet.tags': [hashtag['text'] for hashtag in self.tweet.entities['hashtags']],
+            'tweet.tags': [hashtag['text'].lower() for hashtag in self.tweet.entities['hashtags']],
             'tweet.statuses_count': self.tweet.user.statuses_count,
             'tweet.follower_count': self.tweet.user.followers_count,
             'tweet.product': self.tweet.source,

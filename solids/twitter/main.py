@@ -49,6 +49,7 @@ def extract_content(context, tweets:List[Dict]) -> List[Dict]:
         match_tweet.from_regex(pattern_selection=context.solid_config['patterns'])
         tweet_data = { **tweet, **match_tweet.denormalized, 'regex.extract': True if match_tweet else False }
         tweet_data['tags'] = tweet_data['tweet.tags'] + tweet_data.get('tags', [])
+        tweet_data['tags'] = [tweet.lower() for tweet in tweet_data['tags']]
         all_tweets.append(tweet_data)
     return all_tweets
 
