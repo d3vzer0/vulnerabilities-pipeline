@@ -1,6 +1,6 @@
 from .utils.transforms import Transform
 from dagster import solid, Field, Int, Dict, String, List
-import miniflux
+
 
 @solid(required_resource_keys={'rss'})
 def get_latest_entries(context, feed: Int) -> List[Dict]:

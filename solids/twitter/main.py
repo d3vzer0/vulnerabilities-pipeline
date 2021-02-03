@@ -22,7 +22,7 @@ import redis
 )
 def get_latest_tweets(context, offset: Optional[String]) -> List[Dict]:
     ''' Get the latest tweets from the Twitter API '''
-    client = context.resources.rss.client
+    client = context.resources.twitter.client
     get_tweets = client.query(context.solid_config['query'], since=offset)
     context.log.info(f'Parsing tweets for {len(get_tweets)} entries')
     parsed_tweets = [Transform(tweet).to_dict for tweet in get_tweets]

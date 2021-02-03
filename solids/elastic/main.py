@@ -2,6 +2,7 @@ from dagster import solid, Field, Dict, String, List
 from elasticsearch import helpers
 
 @solid(
+    required_resource_keys={'es'},
     config_schema={
         'index': Field(
             String,

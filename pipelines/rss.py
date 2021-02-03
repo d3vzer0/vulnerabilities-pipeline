@@ -32,7 +32,6 @@ def composite_rss():
         )
     ]
 )
-
 def sync_new_rss():
     for feed in FEEDS:
        get_rss = composite_rss.alias(feed)
