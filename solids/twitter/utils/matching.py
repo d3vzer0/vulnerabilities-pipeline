@@ -6,7 +6,7 @@ PATTERNS = [
         'name': 'cve',
         'key': 'id',
         'model': 'vulnerability',
-        'regex': re.compile('(?i)(?P<id>CVE-\d{4}-\d{4})')
+        'regex': re.compile('(?i)(?P<id>CVE-\d{4}-\d{4,5})')
     },
     {
         'name': 'cpe',
