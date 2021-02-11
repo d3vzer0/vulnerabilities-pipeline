@@ -14,7 +14,7 @@ COPY Pipfile* ./
 RUN pipenv lock --keep-outdated --requirements > requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
 RUN python -m spacy download en_core_web_md
-RUN python -m spacy download nl_core_news_sm
+RUN python -m spacy download nl_core_news_md
 
 # Create directory structure and copy dagster pipelines
 RUN mkdir -p dagster/home dagster/app dagster/var/storage dagster/var/db
